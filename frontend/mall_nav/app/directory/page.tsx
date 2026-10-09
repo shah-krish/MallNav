@@ -1,4 +1,7 @@
-import React from 'react'
+'use client';
+import React, {useState} from 'react'
+
+
 
 type Store = {
     id: string,
@@ -31,6 +34,10 @@ export default function page() {
             <header>
                 <h1 className='text-3xl font-bold'>Mall Directory</h1>
             </header>
+            <section className='flex gap-2 items-stretch'>
+                <input className='border border-gray-600 rounded-xl' placeholder='Search MallNav' type="text"></input>
+                <button type="submit" className='bg-blue-600 text-white font-medium px-4 rounded-xl transition duration-120 active:scale-95'>submit</button>
+            </section>
             {/* grid-cols-1 is mobile default, md is for medium screens, lg is for large screens */}
             <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {
