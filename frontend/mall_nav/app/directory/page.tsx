@@ -6,14 +6,50 @@ type Store = {
     name: string,
     category: string,
     hours: string,
-    accessible: boolean
+    accessible: boolean,
+    zone: string,
+    amenities: string[]
 }
 
+
+
 const INITIAL_STORES: Store[] = [
-  { id: '1', name: 'Nike Factory Store', category: 'Footwear', hours: '10 AM - 9 PM', accessible: true},
-  { id: '2', name: 'Bass Pro Shops', category: 'Outdoor', hours: '9 AM - 9 PM', accessible: true},
-  { id: '3', name: 'Aroma Espresso Bar', category: 'Dining', hours: '8 AM - 8 PM', accessible: true},
-  { id: '4', name: 'Uniqlo', category: 'Apparel', hours: '10 AM - 9 PM', accessible: false},
+ { 
+    id: '1', 
+    name: 'Nike Factory Store', 
+    category: 'Footwear', 
+    hours: '10 AM - 9 PM', 
+    accessible: true, 
+    zone: 'Zone A', 
+    amenities: ['Seating', 'Wheelchair Ramp'] 
+  },
+  { 
+    id: '2', 
+    name: 'Bass Pro Shops', 
+    category: 'Outdoor', 
+    hours: '9 AM - 9 PM', 
+    accessible: true, 
+    zone: 'Zone B', 
+    amenities: ['Elevator', 'Restrooms'] 
+  },
+  { 
+    id: '3', 
+    name: 'Aroma Espresso Bar', 
+    category: 'Dining', 
+    hours: '8 AM - 8 PM', 
+    accessible: false, 
+    zone: 'Zone C', 
+    amenities: ['Wi-Fi'] 
+  },
+  { 
+    id: '4', 
+    name: 'Uniqlo', 
+    category: 'Apparel', 
+    hours: '10 AM - 9 PM', 
+    accessible: true, 
+    zone: 'Zone A', 
+    amenities: ['Wheelchair Ramp', 'Fitting Rooms'] 
+  },
 ];
 
 function StoreCard ({store}: {store: Store}){
@@ -22,6 +58,9 @@ function StoreCard ({store}: {store: Store}){
             <h2 className='text-lg font-bold text-gray-900'>{store.name}</h2>
             <p className='text-sm text-gray-600'>{store.category}</p>
             <p className='text-xs text-gray-500'>Hours: {store.hours}</p>
+            {store.accessible && (
+                <p className='mt-3 inline-block w-fit text-xs font-sans font-semibold bg-emerald-600 text-white px-2 py-0.5 rounded'>Accessible Store</p>
+            )}
         </article>
     )
 }
@@ -60,6 +99,7 @@ export default function Page() {
                     <input type = "checkbox" checked = {searchAccessible} onChange={(e) => setSearchAccessible(e.target.checked)}></input>    
                 </label>
             </section>
+            
             {/* grid-cols-1 is mobile default, md is for medium screens, lg is for large screens */}
             <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {
