@@ -1,8 +1,6 @@
 'use client';
 import React, {useState} from 'react'
 
-
-
 type Store = {
     id: string,
     name: string,
@@ -27,7 +25,11 @@ function StoreCard ({store}: {store: Store}){
     )
 }
 
-export default function page() {
+export default function Page() {
+    const [search, setSearch] = useState("")
+    const filteredStores = INITIAL_STORES.filter((store)=>
+        store.name.toLowerCase().includes(search.toLowerCase())
+    )
   return (
     <div>
         <main className='max-w-4xl mx-auto p-8 space-y-6'>
@@ -35,8 +37,13 @@ export default function page() {
                 <h1 className='text-3xl font-bold'>Mall Directory</h1>
             </header>
             <section className='flex gap-2 items-stretch'>
-                <input className='border border-gray-600 rounded-xl' placeholder='Search MallNav' type="text"></input>
-                <button type="submit" className='bg-blue-600 text-white font-medium px-4 rounded-xl transition duration-120 active:scale-95'>submit</button>
+                <input className='border border-gray-600 rounded-xl' 
+                                placeholder='Search MallNav' 
+                                type="text" 
+                                value = {search}
+                                // when input value changes, event e is triggered which sets the search value
+                                onChange = {(e) => setSearch(e.target.value)}></input>
+                {/* <button type="submit" className='bg-blue-600 text-white font-medium px-4 rounded-xl transition duration-120 active:scale-95'>submit</button> */}
             </section>
             {/* grid-cols-1 is mobile default, md is for medium screens, lg is for large screens */}
             <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -46,7 +53,7 @@ export default function page() {
                     // () instead of {} as no need to return manually if () 
                     // key = mandatory identifier
                     // store = {store} for that iteration stored in store, apply StoreCard function on it
-                    INITIAL_STORES.map((store) => (
+                    filteredStores.map((store) => (
                      <StoreCard key = {store.id} store = {store}></StoreCard>   
                     ))
                 }
