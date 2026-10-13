@@ -6,13 +6,14 @@ type Store = {
     name: string,
     category: string,
     hours: string,
+    accessible: boolean
 }
 
 const INITIAL_STORES: Store[] = [
-  { id: '1', name: 'Nike Factory Store', category: 'Footwear', hours: '10 AM - 9 PM',},
-  { id: '2', name: 'Bass Pro Shops', category: 'Outdoor', hours: '9 AM - 9 PM'},
-  { id: '3', name: 'Aroma Espresso Bar', category: 'Dining', hours: '8 AM - 8 PM'},
-  { id: '4', name: 'Uniqlo', category: 'Apparel', hours: '10 AM - 9 PM'},
+  { id: '1', name: 'Nike Factory Store', category: 'Footwear', hours: '10 AM - 9 PM', accessible: true},
+  { id: '2', name: 'Bass Pro Shops', category: 'Outdoor', hours: '9 AM - 9 PM', accessible: true},
+  { id: '3', name: 'Aroma Espresso Bar', category: 'Dining', hours: '8 AM - 8 PM', accessible: true},
+  { id: '4', name: 'Uniqlo', category: 'Apparel', hours: '10 AM - 9 PM', accessible: true},
 ];
 
 function StoreCard ({store}: {store: Store}){
@@ -28,8 +29,9 @@ function StoreCard ({store}: {store: Store}){
 export default function Page() {
     const [searchName, setSearchName] = useState("")
     const [searchCategory, setSearchCategory] = useState("all")
+    const [searchAccessible, setSearchAccessible] = useState(true)
     const filteredStores = INITIAL_STORES.filter((store)=>
-        store.name.toLowerCase().includes(searchName.toLowerCase()) && (searchCategory === "all" || store.category === searchCategory)
+        store.name.toLowerCase().includes(searchName.toLowerCase()) && (searchCategory === "all" || store.category === searchCategory) && (store.accessible === searchAccessible)
     )
   return (
     <div>
@@ -37,7 +39,7 @@ export default function Page() {
             <header>
                 <h1 className='text-3xl font-bold'>Mall Directory</h1>
             </header>
-            <section className='flex gap-2 items-stretch'>
+            <section className='flex gap-2 items-center'>
                 <input className='border border-gray-600 rounded-xl pl-3 p-1' 
                                 placeholder='Search MallNav' 
                                 type="text" 
@@ -51,6 +53,10 @@ export default function Page() {
                             <option value="Apparel">Apparel</option>
                             <option value ="Outdoor">Outdoor</option>
                 </select>
+                <label className='flex items-center gap-1'>
+                    Accessible?
+                    <input type = "checkbox" checked = {searchAccessible} onChange={(e) => setSearchAccessible(e.target.checked)}></input>    
+                </label>
             </section>
             {/* grid-cols-1 is mobile default, md is for medium screens, lg is for large screens */}
             <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
