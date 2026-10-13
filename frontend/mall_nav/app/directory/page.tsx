@@ -26,9 +26,10 @@ function StoreCard ({store}: {store: Store}){
 }
 
 export default function Page() {
-    const [search, setSearch] = useState("")
+    const [searchName, setSearchName] = useState("")
+    const [searchCategory, setSearchCategory] = useState("all")
     const filteredStores = INITIAL_STORES.filter((store)=>
-        store.name.toLowerCase().includes(search.toLowerCase())
+        store.name.toLowerCase().includes(searchName.toLowerCase()) && (searchCategory === "all" || store.category === searchCategory)
     )
   return (
     <div>
@@ -37,13 +38,19 @@ export default function Page() {
                 <h1 className='text-3xl font-bold'>Mall Directory</h1>
             </header>
             <section className='flex gap-2 items-stretch'>
-                <input className='border border-gray-600 rounded-xl' 
+                <input className='border border-gray-600 rounded-xl pl-3 p-1' 
                                 placeholder='Search MallNav' 
                                 type="text" 
-                                value = {search}
+                                value = {searchName}
                                 // when input value changes, event e is triggered which sets the search value
-                                onChange = {(e) => setSearch(e.target.value)}></input>
-                {/* <button type="submit" className='bg-blue-600 text-white font-medium px-4 rounded-xl transition duration-120 active:scale-95'>submit</button> */}
+                                onChange = {(e) => setSearchName(e.target.value)}></input>
+                <select id = "category" value = {searchCategory} onChange={(e) => setSearchCategory(e.target.value)}>
+                            <option value="all">All categories</option>
+                            <option value="Footwear">Footwear</option>
+                            <option value="Dining">Dining</option>
+                            <option value="Apparel">Apparel</option>
+                            <option value ="Outdoor">Outdoor</option>
+                </select>
             </section>
             {/* grid-cols-1 is mobile default, md is for medium screens, lg is for large screens */}
             <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
