@@ -13,7 +13,7 @@ const INITIAL_STORES: Store[] = [
   { id: '1', name: 'Nike Factory Store', category: 'Footwear', hours: '10 AM - 9 PM', accessible: true},
   { id: '2', name: 'Bass Pro Shops', category: 'Outdoor', hours: '9 AM - 9 PM', accessible: true},
   { id: '3', name: 'Aroma Espresso Bar', category: 'Dining', hours: '8 AM - 8 PM', accessible: true},
-  { id: '4', name: 'Uniqlo', category: 'Apparel', hours: '10 AM - 9 PM', accessible: true},
+  { id: '4', name: 'Uniqlo', category: 'Apparel', hours: '10 AM - 9 PM', accessible: false},
 ];
 
 function StoreCard ({store}: {store: Store}){
@@ -29,9 +29,11 @@ function StoreCard ({store}: {store: Store}){
 export default function Page() {
     const [searchName, setSearchName] = useState("")
     const [searchCategory, setSearchCategory] = useState("all")
-    const [searchAccessible, setSearchAccessible] = useState(true)
+    const [searchAccessible, setSearchAccessible] = useState(false)
     const filteredStores = INITIAL_STORES.filter((store)=>
-        store.name.toLowerCase().includes(searchName.toLowerCase()) && (searchCategory === "all" || store.category === searchCategory) && (store.accessible === searchAccessible)
+        store.name.toLowerCase().includes(searchName.toLowerCase()) 
+        && (searchCategory === "all" || store.category === searchCategory) 
+        && (!searchAccessible || store.accessible)
     )
   return (
     <div>
