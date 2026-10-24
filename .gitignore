@@ -27,6 +27,11 @@ backend/.venv/
 *.swp
 *.swo
 *~
+.vscode/
+
+# Local DB artifacts
+*.sqlite3
+*.db
 
 # Node.js & Next.js
 node_modules/
