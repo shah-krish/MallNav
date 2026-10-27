@@ -9,7 +9,8 @@ class StoreBase(BaseModel):
     amenities: list[str] = Field(default_factory=list, examples=[["wheelchair_accessible", "curbside_pickup"]])
     coordinates: list[float] = Field(..., min_length=2, max_length=2, examples=[[124.5, 340.2]])
   
-class StoreCreate(BaseModel):
+class StoreCreate(StoreBase):
+    # create even if no id provided. will use uuid if no id provided
     id: str | None = Field(
         default = None 
     )
@@ -23,6 +24,6 @@ class StoreUpdate(BaseModel):
     amenities: list[str] | None = Field(default=None)
     coordinates: list[float] | None = Field(default=None, min_length=2, max_length=2)
 
-class StoreResponse(BaseModel):
+class StoreResponse(StoreBase):
     id: str = Field(...)
     model_config = ConfigDict(from_attributes=True)
