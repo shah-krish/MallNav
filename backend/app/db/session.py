@@ -15,7 +15,7 @@ SessionLocal = sessionmaker(
     bind = engine   
 )
 
-def get_dub() -> Generator[Session, None, None]:
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try: 
         yield db
