@@ -3,6 +3,7 @@ from app.api.deps import SessionDep
 from app.schemas.store import StoreCreate, StoreResponse
 from app.services import store_service
 
+# Creates a router object and assigns it a variable router
 router = APIRouter()
 
 @router.get("/", response_model=list[StoreResponse])
