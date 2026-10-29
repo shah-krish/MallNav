@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.models.store import Store
 from app.schemas.store import StoreCreate
 
+
 def get_store_by_id(db: Session, store_id: str)-> Store | None: 
     stmt = select(Store).where(Store.id == store_id)
     result = db.execute(stmt)
@@ -21,8 +22,9 @@ def get_stores(db: Session, skip: int = 0, limit: int = 100, category: str | Non
 
     return list(result.scalars().all())
 
+# store_in: StoreCreate = FastAPI reads incoming JSON, validates against StoreCreate model (Pydantic), and creates a StoreCreate object
 def create_store(db: Session, store_in: StoreCreate) -> Store:
-    store_data = store_in.model_dump()
+    store_data = store_in.model_dump() 
 
     if not store_data.get("id"):
         store_data["id"] = str(uuid.uuid4())
