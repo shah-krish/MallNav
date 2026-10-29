@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.store import Store
-from app.schemas.store import StoreCreate
+from app.schemas.store import StoreCreate, StoreUpdate
 
 
 def get_store_by_id(db: Session, store_id: str)-> Store | None: 
@@ -35,3 +35,17 @@ def create_store(db: Session, store_in: StoreCreate) -> Store:
     db.commit()
     db.refresh(store)
     return store
+
+def update_store(db: Session, store: Store, store_in: StoreUpdate) -> Store:
+    # Extract only fields that are sent in the request
+    store_data = store_in.model_dump(exclude_unset=True)
+    for field, value in store_data.items():
+        setattr(store, field, value)
+    db.commit()
+    db.refresh(store)
+    return store
+
+def delete_store(db: Session, store: Store) -> None:
+    db.delete(store)
+    db.commit()
+    
