@@ -7,31 +7,47 @@ from app.services import store_service
 router = APIRouter()
 
 @router.get("/", response_model=list[StoreResponse])
-def read_stores(db: SessionDep, skip: int =0, limit: int = 100, category: str | None = None, zone: str | None = None):
-   return store_service.get_stores(db, skip, limit, category, zone)
+def read_stores(
+    db: SessionDep,
+    skip: int = 0,
+    limit: int = 100,
+    name: str | None = None,
+    category: str | None = None,
+    accessible: bool | None = None,
+    zone: str | None = None,
+):
+    return store_service.get_stores(
+        db,
+        skip=skip,
+        limit=limit,
+        name=name,
+        category=category,
+        accessible=accessible,
+        zone=zone,
+    )
 
 @router.get("/{id}", response_model=StoreResponse)
 def read_store_by_id(db: SessionDep, id: str):
-   store = store_service.get_store_by_id(db, id)
-   if store is None:
-      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"Store with id: {id} not found")
-   return store 
+    store = store_service.get_store_by_id(db, id)
+    if store is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Store with id: {id} not found")
+    return store 
 
 # By default FastAPI returns response code 200 (OK) but 201 signals that new record was committed to db
 @router.post("/", response_model=StoreResponse, status_code=status.HTTP_201_CREATED)
 def create_store(db: SessionDep, store_in: StoreCreate):
-   return store_service.create_store(db, store_in)
+    return store_service.create_store(db, store_in)
 
 @router.patch("/{id}", response_model=StoreResponse)
 def update_store(db: SessionDep, id: str, store_in: StoreUpdate):
-   store = store_service.get_store_by_id(db, id)
-   if store is None:
-      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Store with id: {id} not found")
-   return store_service.update_store(db, store, store_in)
+    store = store_service.get_store_by_id(db, id)
+    if store is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Store with id: {id} not found")
+    return store_service.update_store(db, store, store_in)
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_store(db: SessionDep, id: str):
-   store = store_service.get_store_by_id(db, id)
-   if store is None:
-      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Store with id: {id} not found")
-   return store_service.delete_store(db, store)
+    store = store_service.get_store_by_id(db, id)
+    if store is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Store with id: {id} not found")
+    return store_service.delete_store(db, store)
