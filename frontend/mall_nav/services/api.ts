@@ -19,7 +19,7 @@ export interface Store{
 // Promise means that the result will be available in future. 
 // This function will fetch stores from a server and eventually return a list of stores.
 export async function fetchStores(): Promise<Store[]> {
-    const response = await fetch('${BASE_URL}/stores/')
+    const response = await fetch(`${BASE_URL}/stores/`)
     if(!response.ok){
         throw new Error('Failed to fetch stores: ${response.statusText}');
     }

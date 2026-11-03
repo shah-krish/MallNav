@@ -1,63 +1,22 @@
 'use client';
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
+import { fetchStores, Store } from '@/services/api';
 
-type Store = {
-    id: string,
-    name: string,
-    category: string,
-    hours: string,
-    accessible: boolean,
-    zone: string,
-    amenities: string[]
+function formatHours(hours?: Store['hours']): string{
+    if (!hours) return 'Hours not available';
+    const firstDay = Object.values(hours)[0];
+    if (!firstDay) return 'Hours not available';
+    if (firstDay.is_closed) return 'Closed';
+    if (firstDay.open && firstDay.close) return `${firstDay.open} - ${firstDay.close}`;
+    return 'Hours available upon request';
 }
-
-
-
-const INITIAL_STORES: Store[] = [
- { 
-    id: '1', 
-    name: 'Nike Factory Store', 
-    category: 'Footwear', 
-    hours: '10 AM - 9 PM', 
-    accessible: true, 
-    zone: 'Zone A', 
-    amenities: ['Seating', 'Wheelchair Ramp'] 
-  },
-  { 
-    id: '2', 
-    name: 'Bass Pro Shops', 
-    category: 'Outdoor', 
-    hours: '9 AM - 9 PM', 
-    accessible: true, 
-    zone: 'Zone B', 
-    amenities: ['Elevator', 'Restrooms'] 
-  },
-  { 
-    id: '3', 
-    name: 'Aroma Espresso Bar', 
-    category: 'Dining', 
-    hours: '8 AM - 8 PM', 
-    accessible: false, 
-    zone: 'Zone C', 
-    amenities: ['Wi-Fi'] 
-  },
-  { 
-    id: '4', 
-    name: 'Uniqlo', 
-    category: 'Apparel', 
-    hours: '10 AM - 9 PM', 
-    accessible: true, 
-    zone: 'Zone A', 
-    amenities: ['Wheelchair Ramp', 'Fitting Rooms'] 
-  },
-];
 
 function StoreCard ({store}: {store: Store}){
     return(
         <article className='border border-gray-200 rounded-lg p-4 bg-white shadow-sm'>
             <h2 className='text-lg font-bold text-gray-900'>{store.name}</h2>
             <p className='text-sm text-gray-600'>{store.category}</p>
-            <p className='text-xs text-gray-500'>Hours: {store.hours}</p>
+            <p className='text-xs text-gray-500'>Hours: {formatHours(store.hours)}</p>
             {store.accessible && (
                 <p className='mt-3 inline-block w-fit text-xs font-sans font-semibold bg-emerald-600 text-white px-2 py-0.5 rounded'>Accessible Store</p>
             )}
@@ -66,14 +25,40 @@ function StoreCard ({store}: {store: Store}){
 }
 
 export default function Page() {
-    const [searchName, setSearchName] = useState("")
-    const [searchCategory, setSearchCategory] = useState("all")
-    const [searchAccessible, setSearchAccessible] = useState(false)
-    const filteredStores = INITIAL_STORES.filter((store)=>
-        store.name.toLowerCase().includes(searchName.toLowerCase()) 
-        && (searchCategory === "all" || store.category === searchCategory) 
-        && (!searchAccessible || store.accessible)
-    )
+    // stores = actual list of stores. setStores = function to alter stores. <Store[]> tells ts that this variable will contain an array of Stores
+    const [stores, setStores] = useState<Store[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // searchName stores the search text. It is initially empty hence ('')
+    const[searchName, setSearchName] = useState('');
+    // initially all the stores are displayed ('all')
+    const [searchCategory, setSearchCategory] = useState('all');
+    // initially all the stores are displayed ('false') [accessible only = false]
+    const [searchAccessible, setSearchAccessible] = useState(false);
+
+    // fetch stores as soon as the page loads
+    // .then() = runs the code after the request succeeds
+    // data is the store information returned by backend
+    useEffect(() => {
+        fetchStores().then((data) => {
+            setStores(data);
+            setError(null)
+        })
+        .catch((err) => {
+            setError(err.message || 'Something went wrong while fetching the stores.')
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+        // The last empty array }, []); is the dependency array. It means Fetch the stores when the page first opens, not every time it updates. 
+    }, []);
+
+    const filteredStores = stores.filter((store) => 
+        store.name.toLowerCase().includes(searchName.toLowerCase()) &&
+        (searchCategory === 'all' || store.category === searchCategory) &&
+        (!searchAccessible || store.accessible)
+    );
   return (
     <div>
         <main className='max-w-4xl mx-auto p-8 space-y-6'>
@@ -100,20 +85,29 @@ export default function Page() {
                 </label>
             </section>
             
-            {/* grid-cols-1 is mobile default, md is for medium screens, lg is for large screens */}
-            <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {
-                    // (store) is parameter name[on loop1, holds the first object then second then....]
-                    // => arrow operator
-                    // () instead of {} as no need to return manually if () 
-                    // key = mandatory identifier
-                    // store = {store} for that iteration stored in store, apply StoreCard function on it
-                    filteredStores.map((store) => (
-                     <StoreCard key = {store.id} store = {store}></StoreCard>   
-                    ))
-                }
-            </section>
-        </main>
-    </div>
-  )
+            
+            {loading && <p className='text-gray-500'>Loading stores from backend...</p>}
+    
+            {error && (
+              <div className='p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg'>
+                <p className='font-semibold'>Could not load stores</p>
+                <p className='text-sm'>{error}</p>
+              </div>
+            )}
+    
+            {!loading && !error && filteredStores.length === 0 && (
+              <p className='text-gray-500'>No stores found matching your criteria.</p>
+            )}
+
+            {!loading && !error && (
+            // grid-cols-1 is mobile default, md is for medium screens, lg is for large screens 
+              <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                {filteredStores.map((store) => (
+                  <StoreCard key={store.id} store={store} />
+                ))}
+              </section>
+            )}
+          </main>
+        </div>
+      );
 }
