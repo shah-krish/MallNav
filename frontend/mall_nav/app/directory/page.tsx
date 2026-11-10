@@ -85,9 +85,10 @@ export default function Page() {
                 </label>
             </section>
             
-            
+            {/* If loading is true, display loading stores from backend */}
             {loading && <p className='text-gray-500'>Loading stores from backend...</p>}
-    
+
+            {/* If error is true, display Could not load stores and actual error message stored in error variable */}
             {error && (
               <div className='p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg'>
                 <p className='font-semibold'>Could not load stores</p>
@@ -95,10 +96,12 @@ export default function Page() {
               </div>
             )}
     
+            {/* If no error and not loading but no stores matching the filter */}
             {!loading && !error && filteredStores.length === 0 && (
               <p className='text-gray-500'>No stores found matching your criteria.</p>
             )}
 
+            {/* Else display the relevant stores */}
             {!loading && !error && (
             // grid-cols-1 is mobile default, md is for medium screens, lg is for large screens 
               <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
