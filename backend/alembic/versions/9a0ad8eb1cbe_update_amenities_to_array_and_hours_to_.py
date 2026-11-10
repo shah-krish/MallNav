@@ -28,7 +28,7 @@ def upgrade() -> None:
         type_=postgresql.JSONB(astext_type=sa.Text()),
         existing_type=sa.String(length=255),
         existing_nullable=True,
-        postgresql_using="hours::jsonb",
+        postgresql_using="CASE WHEN hours IS NULL THEN NULL WHEN hours ~ '^\\s*\\{' THEN hours::jsonb ELSE NULL END",
     )
     # Convert amenities from JSON to ARRAY(String)
     op.alter_column(
