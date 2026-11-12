@@ -9,7 +9,7 @@ class UserLogin(BaseModel):
 class UserCreate(BaseModel):
     email: str
     password: str
-    role: UserRole = UserRole.VISITOR
+    role: UserRole
     store_id: str | None = None
 
 class UserResponse(BaseModel):
