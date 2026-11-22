@@ -33,5 +33,10 @@ def require_operator(user: Annotated[User, Depends(get_current_user)]) -> None:
     if user.role.value != UserRole.OPERATOR:
         raise HTTPException(status_code= status.HTTP_403_FORBIDDEN, detail= "Access restricted.")
 
+def require_tenant(user: Annotated[User, Depends(get_current_user)]) -> User | None:
+    if user.role.value != UserRole.TENANT:
+        raise HTTPException(status_code= status.HTTP_403_FORBIDDEN, detail= "Access restricted.")
+    return user
+
 
 
