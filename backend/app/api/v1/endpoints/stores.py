@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-from app.api.deps import SessionDep, require_operator
+from app.api.deps import SessionDep, require_operator, require_tenant
 from app.schemas.store import StoreCreate, StoreResponse, StoreUpdate
 from app.services import store_service
+from typing import Annotated
+from app.models.user import User
+from app.schemas.change_request import ChangeRequestCreate, ChangeRequestResponse
 
 # Creates a router object and assigns it a variable router
 router = APIRouter()
@@ -51,3 +54,9 @@ def delete_store(db: SessionDep, id: str):
     if store is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Store with id: {id} not found")
     return store_service.delete_store(db, store)
+
+@router.post("/{store_id}/change-requests", status_code=status.HTTP_201_CREATED, response_model= ChangeRequestResponse)
+def change_requests(db: SessionDep, store_id: str, tenant: Annotated[User, Depends(require_tenant)], proposal: ChangeRequestCreate):
+    if store_id != tenant.store_id:
+        raise HTTPException(status_code= status.HTTP_403_FORBIDDEN, detail= "Access forbidden.")
+    return store_service.create_change_request(db, proposal, store_id, tenant.id)
