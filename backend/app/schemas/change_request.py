@@ -2,9 +2,14 @@ from datetime import datetime
 from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 from app.models.change_request import ChangeRequestStatus
+from app.schemas.store import DayHours
+
+class ProposedStoreChanges(BaseModel):
+    model_config = ConfigDict(extra= "forbid")
+    hours: dict[str, DayHours] = Field(..., min_length= 1, examples=[{"hours": {"monday": {"open": "09:00", "close": "20:00", "is_closed": False}}}])
 
 class ChangeRequestCreate(BaseModel):
-    proposed_changes: dict[str, Any] = Field(..., examples=[{"hours": {"monday": {"open": "09:00", "close": "20:00", "is_closed": False}}}])
+    proposed_changes: ProposedStoreChanges = Field(...,  examples=[{"hours": {"monday": {"open": "09:00", "close": "20:00", "is_closed": False}}}])
 
 class ChangeRequestReview(BaseModel):
     review_notes: str | None = Field(default=None, examples=["Approved updated weekday hours"])
