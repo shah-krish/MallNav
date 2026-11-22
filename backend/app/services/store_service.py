@@ -4,6 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.store import Store
 from app.schemas.store import StoreCreate, StoreUpdate
+from app.schemas.change_request import ChangeRequestCreate
+from app.models.change_request import StoreChangeRequest
 
 
 def get_store_by_id(db: Session, store_id: str) -> Store | None: 
@@ -50,6 +52,20 @@ def create_store(db: Session, store_in: StoreCreate) -> Store:
     db.refresh(store)
     return store
 
+def create_change_request(
+    db: Session,
+    request_in: ChangeRequestCreate,
+    store_id: str,
+    requested_by_user_id: str,
+) -> StoreChangeRequest:
+    
+    change_request = StoreChangeRequest(id=str(uuid.uuid4()),store_id=store_id,requested_by_user_id=requested_by_user_id,proposed_changes=request_in.proposed_changes.model_dump(mode="json"),)
+
+    db.add(change_request)
+    db.commit()
+    db.refresh(change_request)
+    return change_request
+
 
 def update_store(db: Session, store: Store, store_in: StoreUpdate) -> Store:
     # Extract only fields that are sent in the request
@@ -64,3 +80,4 @@ def update_store(db: Session, store: Store, store_in: StoreUpdate) -> Store:
 def delete_store(db: Session, store: Store) -> None:
     db.delete(store)
     db.commit()
+
