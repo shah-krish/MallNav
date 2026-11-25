@@ -81,3 +81,9 @@ def delete_store(db: Session, store: Store) -> None:
     db.delete(store)
     db.commit()
 
+def list_pending_change_requests(db: Session):
+    stmt = select(StoreChangeRequest).where(StoreChangeRequest.status == 'PENDING')
+
+    # Scalars unwraps each result row so we get StoreChangeRequest object itself
+    result = db.execute(stmt).scalars().all()
+    return result
