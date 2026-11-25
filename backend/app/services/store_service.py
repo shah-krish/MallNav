@@ -8,8 +8,10 @@ from app.schemas.change_request import ChangeRequestCreate
 from app.models.change_request import StoreChangeRequest
 
 
-def get_store_by_id(db: Session, store_id: str) -> Store | None: 
+def get_store_by_id(db: Session, store_id: str, *, for_update: bool = False) -> Store | None: 
     stmt = select(Store).where(Store.id == store_id)
+    if for_update:
+        stmt = stmt.with_for_update()
     result = db.execute(stmt)
     return result.scalar_one_or_none()
 
