@@ -14,3 +14,7 @@ def list_pending_change_requests(db: SessionDep):
 @router.post("/{request_id}/reject", response_model=ChangeRequestResponse, dependencies=[Depends(require_operator)])
 def reject_pending_request(db: SessionDep, request_id: str, review: ChangeRequestReview):
     return change_request_service.reject_change_request(db, request_id, review.review_notes)
+
+@router.post("/{request_id}/approve", response_model=ChangeRequestResponse, dependencies=[Depends(require_operator)])
+def approve_pending_request(db: SessionDep, request_id: str, review: ChangeRequestReview):
+    return change_request_service.approve_change_request(db, request_id, review.review_notes)
